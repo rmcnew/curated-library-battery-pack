@@ -260,7 +260,7 @@ pub fn generate_random_string(len: usize) -> String {
         .collect()
 }
 
-/// get the cause of an error    
+/// get the cause of an error
 pub fn error_root_cause(mut err: &(dyn std::error::Error + 'static)) -> String {
     use std::fmt::Write;
 
@@ -316,6 +316,7 @@ pub async fn write_string_to_named_tempfile(
     }
 }
 
+
 /// sleep for a randomized amount up to 'max_delay_in_seconds' before continuing
 pub async fn start_after_random_delay(max_delay_in_seconds: u8) {
     use rand::distr::Uniform;
@@ -345,3 +346,4 @@ pub fn hostname() -> String {
         },
     }
 }
+

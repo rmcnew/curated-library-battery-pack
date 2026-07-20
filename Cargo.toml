@@ -1,6 +1,6 @@
 [package]
 name = "curated-library-battery-pack"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2024"
 description = "provides useful crates needed for Rust software development"
 license = "MIT OR Apache-2.0"
@@ -73,4 +73,4 @@ battery-pack = { version = "0.6.0", features = ["build"] }
 hidden = ["battery-pack"]  # globs are supported (["battery-pack", "serde*"])
 
 [package.metadata.battery.templates]
-default = { path = "templates/web_service", description = "HTTPS web service stub" }
+web_service = { path = "templates/web_service", description = "HTTPS web service stub" }

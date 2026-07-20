@@ -1,4 +1,4 @@
 version = 1
 
 [[battery-pack]]
-name = "web_service"
+name = "curated-library-battery-pack"

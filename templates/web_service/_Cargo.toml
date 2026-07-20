@@ -2,7 +2,7 @@
 name = "{{ project_name }}"
 version = "0.1.0"
 edition = "2024"
-description = "A web service"
+description = "{{ description }}"
 
 [lib]
 crate-type = ["lib"]

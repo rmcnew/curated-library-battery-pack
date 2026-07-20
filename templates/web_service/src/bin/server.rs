@@ -7,9 +7,9 @@ use axum::response::{IntoResponse, Response};
 use axum::routing::{get, put};
 use axum_server::tls_rustls::RustlsConfig;
 use clap::Parser;
-use web_service::server_api::*;
-use web_service::shared::{Timestamp, TypeError, hostname, write_string_to_named_tempfile};
-use web_service::tracer;
+use {{ crate_name }}::server_api::*;
+use {{ crate_name }}::shared::{Timestamp, TypeError, hostname, write_string_to_named_tempfile};
+use {{ crate_name }}::tracer;
 use rcgen::{CertifiedKey, generate_simple_self_signed};
 use rust_embed::Embed;
 use std::net::SocketAddr;
@@ -146,8 +146,10 @@ fn extract_json_request<RequestType>(
 /// Server Status APIs
 #[tokio::test]
 async fn test_server_status_get_status() {
-    let _tracer = logger::tracer::test_log(logger::function_name!());
-    shared::start_after_random_delay(RANDOM_DELAY).await;
+    use {{ crate_name }}::shared::RequestId;
+
+    let _tracer = {{ crate_name }}::tracer::test_log("test_server_status_get_status");
+    {{ crate_name }}::shared::start_after_random_delay(5).await;
     let request = StatusRequest {
         request_id: RequestId::new(),
         timestamp: Timestamp::now(),

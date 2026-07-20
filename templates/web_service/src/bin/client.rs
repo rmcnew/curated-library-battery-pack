@@ -1,8 +1,8 @@
 // command line client
 use clap::{Args, Parser, Subcommand};
-use web_service::server_api::*;
-use web_service::shared::*;
-use web_service::tracer;
+use {{ crate_name }}::server_api::*;
+use {{ crate_name }}::shared::*;
+use {{ crate_name }}::tracer;
 use reqwest::tls::{Certificate, Identity};
 use tracing::{error, info, warn};
 use url::Url;
@@ -450,9 +450,9 @@ where
 
 /// Convert args to the proper request type using an async function
 /// Send the request to the web_service server and the convert and print
-/// the result or error message.  
+/// the result or error message.
 /// This server_request function is for more complex client-side handling
-/// that involves async function calls.  For example reading the contents 
+/// that involves async function calls.  For example reading the contents
 /// of a file or waiting for a resource to be ready.
 #[allow(dead_code)]
 async fn server_request_async_to_request<Response>(
@@ -568,9 +568,9 @@ async fn main() -> Result<(), ClientError> {
     match &args.command {
         Command::Status(status_args) => {
             server_request::<StatusResponse>(
-                &client, 
-                &web_service_server_url, 
-                status_args, 
+                &client,
+                &web_service_server_url,
+                status_args,
                 STATUS_PATH
             ).await?;
         }

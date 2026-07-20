@@ -1,0 +1,76 @@
+[package]
+name = "curated-library-battery-pack"
+version = "0.1.1"
+edition = "2024"
+description = "provides useful crates needed for Rust software development"
+license = "MIT OR Apache-2.0"
+readme = "README.md"
+keywords = ["battery-pack"]
+repository = "https://github.com/rmcnew/curated-library-battery-pack"
+
+[dependencies]
+axum = { version = "0.8", features = ["http2", "json", "macros", "query", "tokio", "ws"] }
+axum-extra = { version = "0.12" }
+axum-server = { version = "0.8", features = ["tls-rustls"] }
+base32 = { version = "0.5" }
+base64 = { version = "0.22" }
+bytes = { version = "1", features = ["serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+clap = { version = "4", features = ["derive"] }
+crc32fast = { version = "1" }
+ctor = { version = "1" }
+dashmap = { version = "6", features = ["serde"] }
+flate2 = { version = "1", features = ["miniz_oxide"] }
+http-body-util = { version = "0.1" }
+image = { version = "0.25" }
+log = { version = "0.4", features = ["serde"] }
+mime = { version = "0.3" }
+mime_guess = { version = "2" }
+mime_serde_shim = { version = "0.2" }
+phf = { version = "0.14", features = ["macros", "serde"] }
+quick-xml = { version = "0.41", features = ["async-tokio", "serialize"] }
+rand = { version = "0.10" }
+rcgen = { version = "0.14", features = ["crypto", "pem"] }
+regex = { version = "1" }
+reqwest = { version = "0.13", features = ["cookies", "gzip", "http2", "json", "rustls", "stream"] }
+rust-embed = { version = "8", features = ["axum-ex"] }
+rustls = { version = "0.23", features = ["ring", "logging", "std", "tls12"], default-features = false }
+rustls-pemfile = { version = "2" }
+rustls-platform-verifier = { version = "0.7" }
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1" }
+serde_path_to_error = { version = "0.1" }
+serde_with = { version = "3", features = ["macros"] }
+sync_wrapper = { version = "1" }
+tempfile = { version = "3" }
+thiserror = { version = "2" }
+tokio = { version = "1", features = ["full"] }
+tokio-rustls = { version = "0.26", features = ["ring"], default-features = false }
+tokio-util = { version = "0.7" }
+tower-http = { version = "0.7", features = ["full"] }
+tracing = { version = "0.1" }
+tracing-appender = { version = "0.2" }
+tracing-log = { version = "0.2" }
+tracing-subscriber = { version = "0.3", features = ["env-filter", "local-time"] }
+typetag = { version = "0.2" }
+url = { version = "2", features = ["serde"] }
+uuid = { version = "1", features = ["v4", "fast-rng", "serde", "macro-diagnostics"] }
+webpki-roots = { version = "1" }
+
+
+[dev-dependencies]
+battery-pack = { version = "0.6.0", features = ["cli"] }
+
+[build-dependencies]
+battery-pack = { version = "0.6.0", features = ["build"] }
+
+# Optional: narrow the default set and define named features
+# [features]
+# default = ["clap", "serde"]
+# json = ["serde_json"]
+
+[package.metadata.battery-pack]
+hidden = ["battery-pack"]  # globs are supported (["battery-pack", "serde*"])
+
+[package.metadata.battery.templates]
+default = { path = "templates/web_service", description = "HTTPS web service stub" }

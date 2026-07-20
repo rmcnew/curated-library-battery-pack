@@ -1,0 +1,51 @@
+[package]
+name = "{{ project_name }}"
+version = "0.1.0"
+edition = "2024"
+description = "A web service"
+
+[lib]
+crate-type = ["lib"]
+
+[dependencies]
+axum.bp-managed = true
+axum-extra.bp-managed = true
+axum-server.bp-managed = true
+base64.bp-managed = true
+bytes.bp-managed = true
+chrono.bp-managed = true
+clap.bp-managed = true
+ctor.bp-managed = true
+dashmap.bp-managed = true
+http-body-util.bp-managed = true
+image.bp-managed = true
+log.bp-managed = true
+mime.bp-managed = true
+mime_guess.bp-managed = true
+mime_serde_shim.bp-managed = true
+rand.bp-managed = true
+rcgen.bp-managed = true
+reqwest.bp-managed = true
+rust-embed.bp-managed = true
+rustls.bp-managed = true
+rustls-pemfile.bp-managed = true
+rustls-platform-verifier.bp-managed = true
+serde.bp-managed = true
+serde_json.bp-managed = true
+serde_path_to_error.bp-managed = true
+serde_with.bp-managed = true
+sync_wrapper.bp-managed = true
+tempfile.bp-managed = true
+thiserror.bp-managed = true
+tokio.bp-managed = true
+tokio-rustls.bp-managed = true
+tokio-util.bp-managed = true
+tower-http.bp-managed = true
+tracing.bp-managed = true
+tracing-appender.bp-managed = true
+tracing-log.bp-managed = true
+tracing-subscriber.bp-managed = true
+typetag.bp-managed = true
+url.bp-managed = true
+uuid.bp-managed = true
+webpki-roots.bp-managed = true

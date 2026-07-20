@@ -330,21 +330,21 @@ struct ProgramArgs {
     /// Command to use
     #[command(subcommand)]
     command: Command,
-    /// Url for the web_service server
-    #[arg(short = 's', long = "web_service-server-url")]
+    /// Url for the {{ crate_name }} server
+    #[arg(short = 's', long = "{{ crate_name }}-server-url")]
     web_service_server_url: Option<String>,
     /// Use the provided custom certificates in PEM bundle format to verify server identity
-    #[arg(short = 'b', long = "web_service-server-certificates")]
+    #[arg(short = 'b', long = "{{ crate_name }}-server-certificates")]
     web_service_server_certificates: Option<String>,
     /// Use the provided client identity (private key and certificate) in PEM format
-    #[arg(short = 'a', long = "web_service-client-identity")]
+    #[arg(short = 'a', long = "{{ crate_name }}-client-identity")]
     web_service_client_identity: Option<String>,
-    /// Allow web_service server to use self-signed certificate?
-    /// DANGER! web_service server identity will not be assured
+    /// Allow {{ crate_name }} server to use self-signed certificate?
+    /// DANGER! {{ crate_name }} server identity will not be assured
     #[arg(short = 'y', long = "allow-self-signed-cert")]
     web_service_server_allow_self_signed_cert: Option<bool>,
-    /// Do not verify web_service server hostname
-    /// DANGER! web_service server identity will not be assured
+    /// Do not verify {{ crate_name }} server hostname
+    /// DANGER! {{ crate_name }} server identity will not be assured
     #[arg(short = 'w', long = "do-not-verify-server-hostname")]
     web_service_server_do_not_verify_server_hostname: Option<bool>,
     /// Delete log files when closing?
@@ -513,7 +513,7 @@ trait CommandLineDisplay {
 
 impl CommandLineDisplay for StatusResponse {
     fn print(&self) {
-        println!("web_service server is up and handling requests");
+        println!("{{ crate_name }} server is up and handling requests");
     }
 }
 

@@ -22,10 +22,12 @@ First, you will need to install the [Battery Pack CLI](https://battery-pack-rs.g
 cargo install cargo-bp
 ```
 
-Now you can add crates from the Curated Library Battery Pack to your Rust project or use the Web Service template:
+Now you can add crates from the Curated Library Battery Pack to your existing Rust project:
 ```sh
 cargo bp add curated-library-battery-pack
 ```
+
+Or you can create a new Rust project using the Web Service template.
 
 ## Web Service template
 

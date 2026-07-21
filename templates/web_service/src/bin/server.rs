@@ -221,69 +221,17 @@ struct TlsConfig {
     pub _maybe_key_tempfile: Option<NamedTempFile>,
 }
 
-/// Setup TLS configuration
-async fn get_tls_config(args: &ProgramArgs) -> Result<TlsConfig, ApiError> {
-    // Setup default crypto provider
-    rustls::crypto::ring::default_provider()
-        .install_default()
-        .expect("Failed to install ring as rustls crypto provider");
-
-    // Get key and certs for TLS
-    if args.certificates.is_some() && args.key.is_some() {
-        let certs_pathbuf = PathBuf::from(args.certificates.as_ref().unwrap())
-            .canonicalize()
-            .expect("Error getting certificates full path");
-        let key_pathbuf = PathBuf::from(args.key.as_ref().unwrap())
-            .canonicalize()
-            .expect("Error getting key full path");
-        match RustlsConfig::from_pem_chain_file(certs_pathbuf.clone(), key_pathbuf.clone()).await {
-            Ok(tls_config) => Ok(TlsConfig {
-                rust_tls_config: tls_config,
-                certs_pathbuf,
-                key_pathbuf,
-                _maybe_certs_tempfile: None,
-                _maybe_key_tempfile: None,
-            }),
-            Err(error) => {
-                let error_message = format!(
-                    "Error getting security certificates and key for web_service_server TLS: {error}"
-                );
-                error!("{}", error_message);
-                Err(ApiError::TypeError(
-                    TypeError::ValidationError(error_message),
-                ))
-            }
-        }
-    } else if args.certificates.is_some() && args.key.is_none() {
-        let cert = args.certificates.as_ref().unwrap();
-        let error_message = format!(
-            "TLS certificates {cert} was given, but no TLS key was given!  Both TLS certificates and key must be provided."
-        );
-        error!("{}", error_message);
-        return Err(ApiError::TypeError(
-            TypeError::ValidationError(error_message.to_string()),
-        ));
-    } else if args.certificates.is_none() && args.key.is_some() {
-        let key = args.certificates.as_ref().unwrap();
-        let error_message = format!(
-            "TLS key {key} was given, but no TLS certificates were given!  Both TLS certificates and key must be provided."
-        );
-        error!("{}", error_message);
-        return Err(ApiError::TypeError(
-            TypeError::ValidationError(error_message.to_string()),
-        ));
-    } else {
-        // both are none
-        let warning_message = "No TLS certificates or key were provided.  Generating and using self-signed certificate and key for TLS configuration.";
-        warn!("{}", warning_message);
-        eprintln!("{warning_message}");
+impl TlsConfig {
+    pub async fn generate_self_signed() -> Result<TlsConfig, ApiError> {        
         let hostname = hostname();
         let subject_alt_names = vec![hostname, "localhost".to_string()];
         let CertifiedKey { cert, signing_key } = generate_simple_self_signed(subject_alt_names)?;
         // save the generated cert and key to named temp files so they can be used by other system
         // components if needed
-        let cert_named_tempfile = write_string_to_named_tempfile("cert_", ".pem", &cert.pem()).await?;
-        let key_named_tempfile = write_string_to_named_tempfile("key_", ".pem", &signing_key.serialize_pem()) .await?;
+        let cert_named_tempfile =
+            write_string_to_named_tempfile("cert_", ".pem", &cert.pem()).await?;
+        let key_named_tempfile =
+            write_string_to_named_tempfile("key_", ".pem", &signing_key.serialize_pem()).await?;
         let cert_path = cert_named_tempfile.path();
         let key_path = key_named_tempfile.path();
 
@@ -311,31 +259,103 @@ async fn get_tls_config(args: &ProgramArgs) -> Result<TlsConfig, ApiError> {
                     "Error generating self-signed security certificates and key for web_service_server TLS: {error}"
                 );
                 error!("{}", error_message);
-                Err(ApiError::TypeError(
-                    TypeError::ValidationError(error_message),
-                ))
+                Err(ApiError::TypeError(TypeError::ValidationError(
+                    error_message,
+                )))
             }
         }
     }
 }
 
+/// Setup TLS configuration
+async fn get_tls_config(args: &ProgramArgs) -> Result<TlsConfig, ApiError> {
+    // Setup default crypto provider
+    rustls::crypto::ring::default_provider()
+        .install_default()
+        .expect("Failed to install ring as rustls crypto provider");
+    // Get key and certs for TLS
+    match args.certificates.as_ref() {
+        Some(certs) => {            
+            match args.key.as_ref() {
+                Some(key) => {
+                    // both certs and key are provided
+                    info!("Using TLS certificates from: {certs} and TLS key from: {key}");
+                    let certs_pathbuf = PathBuf::from(certs)
+                        .canonicalize()
+                        .expect("Error getting certificates full path");
+                    let key_pathbuf = PathBuf::from(key)
+                        .canonicalize()
+                        .expect("Error getting key full path");
+                    match RustlsConfig::from_pem_chain_file(certs_pathbuf.clone(), key_pathbuf.clone()).await {
+                        Ok(tls_config) => Ok(TlsConfig {
+                            rust_tls_config: tls_config,
+                            certs_pathbuf,
+                            key_pathbuf,
+                            _maybe_certs_tempfile: None,
+                            _maybe_key_tempfile: None,
+                        }),
+                        Err(error) => {
+                            let error_message = format!(
+                                "Error getting security certificates and key for web_service_server TLS: {error}"
+                            );
+                            error!("{}", error_message);
+                            Err(ApiError::TypeError(TypeError::ValidationError(
+                                error_message,
+                            )))
+                        }
+                    }
+                }
+                None => {
+                    // certs are provided but no key                    
+                    let error_message = format!(
+                        "TLS certificates {certs} was given, but no TLS key was given!  Both TLS certificates and key must be provided."
+                    );
+                    error!("{}", error_message);
+                    Err(ApiError::TypeError(TypeError::ValidationError(
+                        error_message.to_string(),
+                    )))
+                }
+            }
+        }
+        None => {
+            match args.key.as_ref() {
+                Some(key) => {
+                    // key is provided but no certs                    
+                    let error_message = format!(
+                        "TLS key {key} was given, but no TLS certificates were given!  Both TLS certificates and key must be provided."
+                    );
+                    error!("{}", error_message);
+                    Err(ApiError::TypeError(TypeError::ValidationError(
+                        error_message.to_string(),
+                    )))
+                }
+                None => {
+                    // neither certs nor key are provided, generate self-signed certs and key
+                    let warning_message = "No TLS certificates or key were provided.  Generating and using self-signed certificate and key for TLS configuration.";
+                    warn!("{}", warning_message);
+                    eprintln!("{warning_message}");
+                    TlsConfig::generate_self_signed().await
+                }
+            }
+        }
+    }    
+}
 
 #[tokio::main]
 async fn main() -> ExitCode {
     // parse command line args
     let args = ProgramArgs::parse();
     // start logger
-    let _server_logger =
-        match tracer::init_logger("/var/tmp", "server", args.delete_logs_on_exit) {
-            Ok(server_logger) => {
-                info!("web_service server logging started");
-                server_logger
-            }
-            Err(error) => {
-                eprintln!("Error starting web_service server logging: {error}");
-                return ExitCode::FAILURE;
-            }
-        };
+    let _server_logger = match tracer::init_logger("/var/tmp", "server", args.delete_logs_on_exit) {
+        Ok(server_logger) => {
+            info!("web_service server logging started");
+            server_logger
+        }
+        Err(error) => {
+            eprintln!("Error starting web_service server logging: {error}");
+            return ExitCode::FAILURE;
+        }
+    };
     info!("Args are: {:?}", args);
 
     // Get key and certs for TLS

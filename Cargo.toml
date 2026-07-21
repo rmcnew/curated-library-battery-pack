@@ -1,6 +1,6 @@
 [package]
 name = "curated-library-battery-pack"
-version = "0.1.3"
+version = "0.1.5"
 edition = "2024"
 description = "provides useful crates needed for Rust software development"
 license = "MIT OR Apache-2.0"

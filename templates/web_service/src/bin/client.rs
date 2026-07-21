@@ -14,6 +14,9 @@ pub enum ClientError {
     /// Wrap a TypeError
     #[error("{0}")]
     TypeError(TypeError),
+    /// Client configuration error
+    #[error("{0}")]
+    ClientConfigError(String),
     /// Error connecting to server
     #[error("Server Connection error: {0}")]
     ServerConnectionError(String),
@@ -25,6 +28,7 @@ impl std::fmt::Debug for ClientError {
             Self::TypeError(message) => {
                 format!("{message}")
             }
+            Self::ClientConfigError(message) => message.to_string(),
             Self::ServerConnectionError(message) => message.to_string(),
         };
         write!(formatter, "{error_string}")
@@ -55,7 +59,7 @@ impl From<reqwest::Error> for ClientError {
             Self::TypeError(TypeError::from(error))
         } else {
             let error_root_cause = error_root_cause(&error);
-            let error_message = format!("Error sending request to web_service server: {error_root_cause}");
+            let error_message = format!("Error sending request to {{ crate_name }} server: {error_root_cause}");
             Self::ServerConnectionError(error_message)
         }
     }
@@ -78,7 +82,7 @@ fn get_web_service_server_url(args: &ProgramArgs) -> Result<Url, ClientError> {
             Ok(web_service_server_url)
         }
         None => {
-            info!("No web_service server URL provided in command args; checking environment variable");
+            info!("No {{ crate_name }} server URL provided in command args; checking environment variable");
             match std::env::var(WEB_SERVICE_SERVER_URL) {
                 Ok(web_service_server_url_string) => {
                     let web_service_server_url = Url::parse(&web_service_server_url_string)?;
@@ -562,7 +566,14 @@ async fn main() -> Result<(), ClientError> {
         client_builder = client_builder.danger_accept_invalid_hostnames(true);
     }
     // Finish initialization
-    let client = client_builder.build()?;
+    let client = match client_builder.build() {
+        Ok(the_client) => the_client,
+        Err(error) => {
+            let error_cause = error_root_cause(&error);
+            eprintln!("{error_cause}");
+            return Err(ClientError::ClientConfigError(error_cause));
+        }
+    };
 
     // Build request struct
     match &args.command {

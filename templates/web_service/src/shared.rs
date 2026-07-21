@@ -63,9 +63,9 @@ impl From<reqwest::Error> for TypeError {
         if error.is_builder() {
             Self::ValidationError(format!("{error}"))
         } else if error.is_body() || error.is_decode() {
-            return Self::ConversionError(format!("{error}"));
+            Self::ConversionError(format!("{error}"))
         } else {
-            return Self::InputOutputError(format!("{error}"));
+            Self::InputOutputError(format!("{error}"))
         }
     }
 }

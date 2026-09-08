@@ -18,36 +18,36 @@ The `curated-library-battery-pack` is an experiment to use a Battery Pack as an 
 ## Usage
 
 First, you will need to install the [Battery Pack CLI](https://battery-pack-rs.github.io/battery-pack/getting-started.html):
-```sh
+```sh,ignore
 cargo install cargo-bp
 ```
 
 Now you can add crates from the Curated Library Battery Pack to your existing Rust project:
-```sh
+```sh,ignore
 cargo bp add curated-library-battery-pack
 ```
 
-Or you can create a new Rust project using the Web Service template.
+Or you use the Web Service template to quickly get started.
 
 ## Web Service template
 
 The `web_service` template can be used as a starting point for creating a simple HTTPS web service that features both a web browser client and a command line client.
 
 Create a new project using this template:
-```sh
+```sh,ignore
 cargo bp new curated-library --template web_service
 ```
 
 You will be prompted to provide a name for your project and a brief description of what it does.  The project template will be instantiated and your project is ready for development.
 
 Build the project:
-```sh
+```sh,ignore
 cd YOUR_PROJECT_NAME
 cargo build
 ```
 
 In the build output directory, you will see two binaries named `client` and `server`:
-```
+```sh,ignore
 ls target/debug
 
 build/  client*  client.d  deps/  examples/  incremental/  libtest2.d  libtest2.rlib  server*  server.d
@@ -56,7 +56,7 @@ build/  client*  client.d  deps/  examples/  incremental/  libtest2.d  libtest2.
 ### Server
 
 `server` is the web server binary.  It embeds all of the web browser client files found in the `web` directory.  Running `server --help` gives the command line options:
-````
+```sh,ignore
 Usage: server [OPTIONS]
 
 Options:
@@ -66,15 +66,15 @@ Options:
   -d, --delete-logs                  Delete log files when closing
   -h, --help                         Print help
   -V, --version                      Print version
-````
+```
 
 If you run the server without providing certificates and a private key, `server` generates self-signed certificates for use in non-production environments.
-```
+```sh,ignore
 ./target/debug/server
 
 No TLS certificates or key were provided.  Generating and using self-signed certificate and key for TLS configuration.
 Starting web_service server on port 8443
-````
+```
 
 ### Web Browser Client
 
@@ -88,7 +88,7 @@ Clicking the "Status Request" button will send a status request to the web servi
 ### Command Line Client
 
 `client` is a command-line client for the web service.  Running `client --help` gives the command line options:
-````
+```sh,ignore
 Usage: client [OPTIONS] <COMMAND>
 
 Commands:
@@ -112,10 +112,10 @@ Options:
           Print help
   -V, --version
           Print version
-````
+```
 
 The command line client can query the server, but expects a secure connection.  If you are using self-signed certificates, the client complains:
-```
+```sh,ignore
 ./target/debug/client -s https://localhost:8443 status
 
 Error: Error sending request to web_service server: error sending request for url (https://localhost:8443/api/v1/status)
@@ -124,7 +124,7 @@ Error: Error sending request to web_service server: error sending request for ur
 ```
 
 You can use `--allow-self-signed-cert true` to allow self-signed certificates:
-```
+```sh,ignore
 ./target/debug/client --allow-self-signed-cert true -s https://localhost:8443 status
 
 '--allow-self-signed-cert' requested.  web_service server identity will NOT be verified.

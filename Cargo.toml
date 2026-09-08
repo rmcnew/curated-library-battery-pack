@@ -1,6 +1,6 @@
 [package]
 name = "curated-library-battery-pack"
-version = "0.1.5"
+version = "0.1.6"
 edition = "2024"
 description = "provides useful crates needed for Rust software development"
 license = "MIT OR Apache-2.0"
@@ -18,7 +18,7 @@ clap = { version = "4", features = ["derive"] }
 crc32fast = { version = "1" }
 ctor = { version = "1" }
 dashmap = { version = "6", features = ["serde"] }
-data-encoding = "2.11.1"
+data-encoding = "2"
 flate2 = { version = "1", features = ["miniz_oxide"] }
 http-body-util = { version = "0.1" }
 image = { version = "0.25" }
